@@ -1,4 +1,4 @@
-
+Python script to fetch latest news and prepare a instagram posts - Headlines on an Image. Output looks like below.
 
 Output 1:
 ![image_0](https://github.com/SharathChampzz/ChampzzProjects/assets/54370770/b5c62a70-2e5b-41a6-aa3e-c97675df8be2)
