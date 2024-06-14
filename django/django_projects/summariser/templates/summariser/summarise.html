@@ -1,0 +1,110 @@
+{% extends "home/base_template.html" %}
+{% block title %}<title>Summariser</title>{% endblock %}
+{% block styles %}
+  <style>
+    /* Add your CSS here */
+    #loading {
+      display: none;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  <div class="container mx-auto mt-5 bg-light border border-dark">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div>
+            <h1>Text Summarizer</h1>
+            <form id="text-form"
+                  method="post"
+                  action="{% url 'summariser-summarize' %}">
+              {% csrf_token %}
+              <div class="form-group form-floating">
+                <label for="id_text">Enter Text</label>
+                <textarea class="form-control"
+                          placeholder="Enter text to summarise..."
+                          name="text"
+                          id="id_text"
+                          style="height: 200px"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="minLength">Minimum length</label>
+                <input type="number"
+                       class="form-control-range"
+                       id="minLength"
+                       name="minLength"
+                       value="30" />
+              </div>
+              <div class="form-group">
+                <label for="maxLength">Maximum length</label>
+                <input type="number"
+                       class="form-control-range"
+                       id="maxLength"
+                       name="maxLength"
+                       value="100" />
+              </div>
+              <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox"
+                         class="custom-control-input"
+                         id="useLocalModel"
+                         name="useLocalModel"
+                         checked>
+                  <label class="custom-control-label" for="useLocalModel">
+                    Use local model to summarise (If unchecked will use online AI tool)
+                  </label>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Summarise</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col">
+          <div>
+            <div id="loading">Loading...</div>
+            <div id="summary"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block scripts %}
+  <script>
+    document
+      .getElementById("text-form")
+      .addEventListener("submit", function (event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        const loading = document.getElementById("loading");
+        const summaryDiv = document.getElementById("summary");
+
+        loading.style.display = "block";
+        summaryDiv.innerHTML = "";
+
+        fetch(form.action, {
+          method: "POST",
+          body: formData,
+          headers: {
+            "X-CSRFToken": form.elements["csrfmiddlewaretoken"].value,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            loading.style.display = "none";
+            if (data.summary) {
+              summaryDiv.innerHTML = `<h2>Summary</h2><p>${data.summary}</p>`;
+            } else {
+              summaryDiv.innerHTML = `<h2>Error</h2><p>${data.error}</p>`;
+            }
+          })
+          .catch((error) => {
+            loading.style.display = "none";
+            summaryDiv.innerHTML = `<h2>Error</h2><p>${error}</p>`;
+          });
+      });
+  </script>
+{% endblock %}
