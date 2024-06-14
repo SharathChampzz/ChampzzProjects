@@ -23,7 +23,3 @@ def summarize(request):
             # summary = summarize_text_using_gemini_ai(text_to_summarize, max_length, min_length) # To reduce token usage
         return JsonResponse({'summary': summary})
     return JsonResponse({'error': 'Invalid form'}, status=400)
-
-
-def test(request):
-    return render(request, 'summariser/test.html')
