@@ -3,9 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Blog Page</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            background-color: #343a40;
+        }
+        .navbar-brand, .nav-link {
+            color: #ffffff !important;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .form-section {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .blog-list-section {
+            max-height: 600px;
+            overflow-y: auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .list-group-item {
+            cursor: pointer;
+        }
+        .list-group-item:hover {
+            background-color: #f1f1f1;
+        }
+        .modal-content {
+            border-radius: 8px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 <body>
-    <h2>This is page</h2>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">My Blog</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/blogs.html">Blogs</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="row">
+            <!-- Blog Form Section -->
+            <div class="col-md-8 form-section">
+                <h2>Create a New Blog</h2>
+                <form id="blogForm">
+                    <div class="form-group">
+                        <label for="title">Blog Title</label>
+                        <input type="text" class="form-control" id="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="content">Blog Content</label>
+                        <textarea class="form-control" id="content" rows="6" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+
+            <!-- Blog List Section -->
+            <div class="col-md-4 blog-list-section">
+                <h2>Blog List</h2>
+                <ul class="list-group" id="blogList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Blog Modal -->
+    <div class="modal fade" id="editBlogModal" tabindex="-1" role="dialog" aria-labelledby="editBlogModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editBlogModalLabel">Edit Blog</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editBlogForm">
+                        <div class="form-group">
+                            <label for="editTitle">Blog Title</label>
+                            <input type="text" class="form-control" id="editTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editContent">Blog Content</label>
+                            <textarea class="form-control" id="editContent" rows="6" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            let editBlogId;
+
+            // Function to fetch blogs
+            function fetchBlogs() {
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/blogs',
+                    method: 'GET',
+                    success: function(data) {
+                        $('#blogList').empty();
+                        data.forEach(function(blog) {
+                            $('#blogList').append(`
+                                <li class="list-group-item" data-id="${blog.id}">
+                                    <a href="#" class="blog-link">${blog.title}</a>
+                                    <p>${blog.content.length > 200 ? blog.content.substring(0, 200) + '...' : blog.content}</p>
+                                </li>
+                            `);
+                        });
+                    }
+                });
+            }
+
+            // Fetch blogs on page load
+            fetchBlogs();
+
+            // Handle form submission for creating a blog
+            $('#blogForm').on('submit', function(e) {
+                e.preventDefault();
+                const title = $('#title').val();
+                const content = $('#content').val();
+
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/blogs',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ title: title, content: content }),
+                    success: function() {
+                        // Clear form
+                        $('#title').val('');
+                        $('#content').val('');
+                        // Refresh blog list
+                        fetchBlogs();
+                    }
+                });
+            });
+
+            // Handle click on blog item for editing
+            $('#blogList').on('click', '.list-group-item', function() {
+                editBlogId = $(this).data('id');
+                const title = $(this).find('.blog-link').text();
+                const content = $(this).find('p').text();
+
+                $('#editTitle').val(title);
+                $('#editContent').val(content);
+                $('#editBlogModal').modal('show');
+            });
+
+            // Handle form submission for editing a blog
+            $('#editBlogForm').on('submit', function(e) {
+                e.preventDefault();
+                const title = $('#editTitle').val();
+                const content = $('#editContent').val();
+
+                $.ajax({
+                    url: `http://127.0.0.1:8000/api/blogs/${editBlogId}`,
+                    method: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ title: title, content: content }),
+                    success: function() {
+                        $('#editBlogModal').modal('hide');
+                        fetchBlogs();
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
