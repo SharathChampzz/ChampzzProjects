@@ -31,6 +31,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'apis',
+    'rest_framework',
+    'quotes.apps.QuotesConfig',
     'summariser.apps.SummariserConfig',
     'home.apps.HomeConfig',
     'django.contrib.admin',

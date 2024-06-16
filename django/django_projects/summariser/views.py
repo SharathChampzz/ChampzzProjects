@@ -19,7 +19,6 @@ def summarize(request):
             summary = summarize_text_using_local_model(text_to_summarize, max_length, min_length)
         else:
             print('Using Gemini AI...')
-            summary = summarize_text_using_local_model(text_to_summarize, max_length, min_length)
-            # summary = summarize_text_using_gemini_ai(text_to_summarize, max_length, min_length) # To reduce token usage
+            summary = summarize_text_using_gemini_ai(text_to_summarize, max_length, min_length) # To reduce token usage
         return JsonResponse({'summary': summary})
     return JsonResponse({'error': 'Invalid form'}, status=400)

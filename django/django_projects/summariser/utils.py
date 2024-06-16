@@ -49,6 +49,7 @@ def summarize_text_using_local_model(text: str, max_length: int = 100, min_lengt
 
 def summarize_text_using_gemini_ai(text: str, max_length: int = 100, min_length: int = 30) -> str:
     """Summarize text using Gemini AI."""
+    return "Summary gen via Gemini AI is disabled for now."
     prompt = (
         f'Could you summarize the following text with a minimum of {min_length} words '
         f'and a maximum of {max_length} words: {text}'
