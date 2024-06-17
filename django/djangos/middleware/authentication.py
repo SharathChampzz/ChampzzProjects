@@ -7,6 +7,8 @@ logger = logging.getLogger('AuthenticationMiddleware')
 
 class AuthenticationMiddleware(MiddlewareMixin):
     def process_request(self, request):
+        if '/api/' not in request.path: # only check authentication for API requests
+            return None
         excluded_paths = ['/api/users/login'] # add more paths to exclude from authentication
         if request.path in excluded_paths:
             return None
