@@ -146,7 +146,7 @@ ROOT_URLCONF = 'djangos.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, r'web\components\html')],
+        'DIRS': [os.path.join(BASE_DIR, r'web\components\html'), os.path.join(BASE_DIR, r'web\components\javascript')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
