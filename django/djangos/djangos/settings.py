@@ -146,7 +146,7 @@ ROOT_URLCONF = 'djangos.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, r'web\components\html')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -158,6 +158,8 @@ TEMPLATES = [
         },
     },
 ]
+
+print(TEMPLATES[0].get('DIRS'))
 
 WSGI_APPLICATION = 'djangos.wsgi.application'
 
