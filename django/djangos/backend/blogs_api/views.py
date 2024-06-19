@@ -31,15 +31,15 @@ def blogs(request: Request) -> Response:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
-def blog(request: Request, pk: int) -> Response:
+def blog(request: Request, id: int) -> Response:
     """
     Get, update, partially update, or delete a blog by id.
 
     Usage:
-        GET /api/blogs/<pk> - get a blog by id
-        PUT /api/blogs/<pk> - update a blog by id
-        PATCH /api/blogs/<pk> - partially update a blog by id
-        DELETE /api/blogs/<pk> - delete a blog by id
+        GET /api/blogs/<id> - get a blog by id
+        PUT /api/blogs/<id> - update a blog by id
+        PATCH /api/blogs/<id> - partially update a blog by id
+        DELETE /api/blogs/<id> - delete a blog by id
 
     Returns:
         - If GET request: the blog with the specified id or error message
@@ -47,7 +47,7 @@ def blog(request: Request, pk: int) -> Response:
         - If DELETE request: success message or error message
     """
     try:
-        blog = Blog.objects.get(pk=pk)
+        blog = Blog.objects.get(id=id)
     except Blog.DoesNotExist:
         return Response({'errorMessage': 'Provided blog id doesnot exists'}, status=status.HTTP_404_NOT_FOUND)
     

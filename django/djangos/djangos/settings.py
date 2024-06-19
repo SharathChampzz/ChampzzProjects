@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     
     # ui
     'web.blogs_web.apps.BlogsConfig',
+    'web.users_web.apps.UserUiConfig',
     
     # api
     'backend.blogs_api.apps.BlogsConfig',
@@ -136,7 +137,7 @@ MIDDLEWARE = [
     
     'middleware.logger.LoggingMiddleware',
     'middleware.performance.PerformanceMonitoringMiddleware',
-    'middleware.security.SecurityMiddleware',
+    # 'middleware.security.SecurityMiddleware',
     'middleware.authentication.AuthenticationMiddleware',
 ]
 
