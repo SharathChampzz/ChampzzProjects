@@ -146,7 +146,7 @@ ROOT_URLCONF = 'djangos.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, r'web\components\html'), os.path.join(BASE_DIR, r'web\components\javascript')],
+        'DIRS': [os.path.join(BASE_DIR, r'web\components\html')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -210,6 +210,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    # BASE_DIR / "web/components/html", # This is not required as we are using templates
+    BASE_DIR / "web/components/css",
+    BASE_DIR / "web/components/javascript",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

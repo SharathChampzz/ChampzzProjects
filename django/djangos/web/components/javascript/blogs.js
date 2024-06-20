@@ -1,4 +1,4 @@
-console.log('Hello from blogs_web/index.html')
+console.log('Hello from external blogs_web/index.html')
     $(document).ready(function () {
         let editBlogId;
         const blogsUrl = document.getElementById('blogs-blogs').getAttribute('data-url');
