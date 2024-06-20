@@ -1,4 +1,5 @@
 {% extends "base_template_1.html" %}
+{% load static %}
 
 {% block title %}
 <title>Login</title>
@@ -23,46 +24,13 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
+
+<div hidden id="users-login" data-url="{% url 'users-login' %}"></div>
+<div hidden id="web-blogs" data-url="{% url 'web-blogs' %}"></div>
+
 {% endblock %}
 
 
 {% block scripts %}
-<script>
-    document.getElementById('login-form').addEventListener('submit', function (e) {
-        console.log(`Sending request to ${this.action}`)
-        console.log(`ID one looks like this: {% url 'blogs-blog' id=1 %}`)
-        e.preventDefault()
-        const formData = new FormData(e.target)
-        const data = {}
-        formData.forEach((value, key) => {
-            data[key] = value
-        })
-        fetch("{% url 'users-login' %}", {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                // 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error)
-                }
-                else {
-                    console.log(data)
-                    access_token = data.access
-                    refresh_token = data.refresh
-                    localStorage.setItem('access_token', `Bearer  ${access_token}`);
-                    localStorage.setItem('refresh_token', refresh_token);
-                    console.log(access_token)
-                    console.log(refresh_token)
-                    window.location.href = "{% url 'web-blogs' %}"
-                }
-            })
-    }
-    )
-</script>
+<script type="text/javascript" src="{% static 'login.js' %}"></script>
 {% endblock %}
