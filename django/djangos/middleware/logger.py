@@ -6,7 +6,7 @@ logger = logging.getLogger('WebServer')
 
 class LoggingMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        logger.info(f'{request.method} {request.get_full_path()} {request.body.decode() if request.body else ""}')
+        logger.info(f'{request.method} {request.get_full_path()}')
         request.start_time = time.time()
     
     def process_response(self, request, response):

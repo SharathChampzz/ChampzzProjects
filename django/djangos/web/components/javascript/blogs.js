@@ -36,12 +36,13 @@ document.addEventListener("DOMContentLoaded", function () {
           blogList.innerHTML += `
           <li class="list-group-item" data-id="${blog.id}" data-toggle="modal" data-target="#editBlogModal">
             <a href="#" class="blog-link" data-toggle="modal" data-target="#editBlogModal">${blog.title}</a>
-            <p>${truncateContent(blog.content)}</p>
+            <p>${blog.content}</p>
           </li>
         `;
         });
       });
   }
+  // <p>${truncateContent(blog.content)}</p>
 
 
   function getHeaders() {
@@ -57,10 +58,14 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function handleSubmit(url, method, title, content) {
+    const formData = new FormData(document.getElementById("editBlogForm"));
+
     fetch(url, {
       method: method,
-      headers: getHeaders(),
-      body: JSON.stringify({ title, content }),
+      headers: {
+        Authorization: localStorage.getItem("access_token")
+      },
+      body: formData,
     })
       .then(() => {
         fetchBlogs();

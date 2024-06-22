@@ -38,7 +38,7 @@
 <div class="container bg-white mt-3 p-3">
     <div class="row py-2">
         <div class="col-9">
-            <h2>Blog List</h2>
+            <h2>Simplified News</h2>
         </div>
         <div class="col-3 text-right">
             <button type="button" class="btn btn-secondary" id="add-blog" data-toggle="modal" data-target="#editBlogModal">&plus; Add Blog</button>
@@ -69,11 +69,15 @@
                 <form id="editBlogForm">
                     <div class="form-group">
                         <label for="editTitle">Blog Title</label>
-                        <input type="text" class="form-control" id="editTitle" required>
+                        <input type="text" class="form-control" id="editTitle" required name="title">
                     </div>
                     <div class="form-group">
                         <label for="editContent">Blog Content</label>
-                        <textarea class="form-control" id="editContent" rows="6" required></textarea>
+                        <textarea class="form-control" id="editContent" rows="6" required name="content"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="imageFile">Image</label>
+                        <input type="file" class="form-control" id="imageFile" required name="image">
                     </div>
                     <button type="submit" class="btn btn-secondary" data-toggle="modal" data-target="#editBlogModal">Save</button>
                     <button class="btn btn-danger" id="deleteblog" data-toggle="modal" data-target="#editBlogModal">Delete</button>
