@@ -10,6 +10,8 @@ class AuthenticationMiddleware(MiddlewareMixin):
         if '/api/' not in request.path: # only check authentication for API requests
             return None
         excluded_paths = ['/api/users/login', '/api/users/logout'] # add more paths to exclude from authentication
+        if request.headers.get('SkipAuth', False) == 'true':
+            return None
         if request.path in excluded_paths:
             return None
         

@@ -34,17 +34,19 @@ document.addEventListener("DOMContentLoaded", function () {
         blogList.innerHTML = "";
         data.reverse().forEach(blog => {
           const isSuperUser = blog.superuser !== undefined ? blog.superuser : true; // Default to true if not specified
+          console.log('blog.image:', blog.image);
+          console
           blogList.innerHTML += `
-              <li class="list-group-item" data-id="${blog.id}">
-                  <div class="clearfix">
-                      ${blog.image ? `<img src="${blog.image}" class="blog-image img-fluid" alt="${blog.title}">` : ''}
-                      <div class="blog-content">
-                          <a href="#" class="blog-link" target="_blank">${blog.title}</a>
-                          ${isSuperUser ? `<span class="edit-icon" data-toggle="modal" data-target="#editBlogModal" data-id="${blog.id}">&#9998;</span>` : ''}
-                          <p>${blog.content}</p>
-                      </div>
-                  </div>
-              </li>
+            <li class="list-group-item" data-id="${blog.id}">
+              <div class="clearfix">
+                ${blog.image ? `<img src="${blog.image}" class="blog-image img-fluid" alt="${blog.title}">` : `<img src="${blog.image_url}" class="blog-image img-fluid" alt="${blog.title}">`}
+                <div class="blog-content">
+                  <a href="${blog.news_source}" class="blog-link" target="_blank">${blog.title}</a>
+                  ${isSuperUser ? `<span class="edit-icon" data-toggle="modal" data-target="#editBlogModal" data-id="${blog.id}">&#9998;</span>` : ''}
+                  <p>${blog.content}</p>
+                </div>
+              </div>
+            </li>
           `;
       });
       });
