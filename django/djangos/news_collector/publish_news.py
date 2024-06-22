@@ -94,6 +94,7 @@ def publish_blog(title, content, news_source, image_url: str = None, image_path:
 
     except Exception as e:
         print(f"Failed to publish blog: {title}. Error: {e}")
+        print('Response:', response.json())
 
 if __name__ == "__main__":
     news_fetcher = IndianNews(num_news=5)

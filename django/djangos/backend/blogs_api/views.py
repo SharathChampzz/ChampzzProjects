@@ -24,8 +24,8 @@ def blogs(request: Request) -> Response:
     """
     if request.method == 'GET':
         blogs = Blog.objects.all().order_by('-created_at')
-        page = request.GET.get('page', 1)
-        paginator = Paginator(blogs, 5)  # Show 10 blogs per page
+        page = request.GET.get('page', 1) # get the page number from the query params
+        paginator = Paginator(blogs, 5)  # Show 5 blogs per page
 
         try:
             blogs_paginated = paginator.page(page)
