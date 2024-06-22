@@ -16,7 +16,19 @@ document.addEventListener("DOMContentLoaded", function () {
       method: "GET",
       headers: getHeaders(),
     })
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          // check for error response and read the error message
+          if (response.status == 401) {
+            alert("You are not authorized to view this page. Please login. Session expired.");
+            window.location.href = "/users/login";
+          }
+          else {
+            throw new Error("Failed to fetch blogs.");
+          }
+        }
+        return response.json();
+      })
       .then(data => {
         const blogList = document.getElementById("blogList");
         blogList.innerHTML = "";
