@@ -20,10 +20,10 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(data => {
         const blogList = document.getElementById("blogList");
         blogList.innerHTML = "";
-        data.forEach(blog => {
+        data.reverse().forEach(blog => {
           blogList.innerHTML += `
           <li class="list-group-item" data-id="${blog.id}">
-            <a href="#" class="blog-link">${blog.title}</a>
+            <a href="#" class="blog-link" data-toggle="modal" data-target="#editBlogModal">${blog.title}</a>
             <p>${truncateContent(blog.content)}</p>
           </li>
         `;
@@ -50,29 +50,10 @@ document.addEventListener("DOMContentLoaded", function () {
       body: JSON.stringify({ title, content }),
     })
       .then(() => {
-        hideModal();
         fetchBlogs();
       });
   }
 
-  function showModal() {
-    const modal = document.getElementById("editBlogModal");
-    modal.classList.add("show");
-    modal.classList.add("fade");
-    modal.style.display = "block";
-    modal.setAttribute("aria-hidden", "false");
-    modal.setAttribute("aria-modal", "true");
-    modal.removeAttribute("hidden");
-  }
-
-  function hideModal() {
-    const modal = document.getElementById("editBlogModal");
-    modal.classList.remove("show");
-    modal.classList.remove("fade");
-    modal.style.display = "none";
-    modal.setAttribute("aria-hidden", "true");
-    modal.removeAttribute("aria-modal");
-  }
 
   const addBlogButton = document.getElementById("add-blog");
   if (addBlogButton) {
@@ -81,7 +62,6 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("editTitle").value = "";
       document.getElementById("editContent").value = "";
       document.getElementById("deleteblog").hidden = true;
-      showModal();
       editBlogId = undefined;
     });
   }
@@ -108,7 +88,6 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("editTitle").value = title;
         document.getElementById("editContent").value = content;
         document.getElementById("deleteblog").hidden = false;
-        showModal();
       }
     });
   }
@@ -135,7 +114,6 @@ document.addEventListener("DOMContentLoaded", function () {
           headers: getHeaders(),
         })
           .then(() => {
-            hideModal();
             fetchBlogs();
           });
       }
