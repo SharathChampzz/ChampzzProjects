@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let editBlogId;
   const blogsUrl = document.getElementById("blogs-blogs")?.getAttribute("data-url");
   const blogBaseUrl = document.getElementById("blogs-blog")?.getAttribute("data-url")?.slice(0, -1);
+  const is_superuser = localStorage.getItem("is_superuser") == "true";
 
   if (!blogsUrl || !blogBaseUrl) {
     console.error("Required elements not found in the DOM.");
@@ -33,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const blogList = document.getElementById("blogList");
         blogList.innerHTML = "";
         data.reverse().forEach(blog => {
-          const isSuperUser = blog.superuser !== undefined ? blog.superuser : true; // Default to true if not specified
+          // const isSuperUser = is_superuser | false; // Default to true if not specified
           console.log('blog.image:', blog.image);
           console
           blogList.innerHTML += `
@@ -42,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 ${blog.image ? `<img src="${blog.image}" class="blog-image img-fluid" alt="${blog.title}">` : `<img src="${blog.image_url}" class="blog-image img-fluid" alt="${blog.title}">`}
                 <div class="blog-content">
                   <a href="${blog.news_source}" class="blog-link" target="_blank">${blog.title}</a>
-                  ${isSuperUser ? `<span class="edit-icon" data-toggle="modal" data-target="#editBlogModal" data-id="${blog.id}">&#9998;</span>` : ''}
+                  ${is_superuser ? `<span class="edit-icon" data-toggle="modal" data-target="#editBlogModal" data-id="${blog.id}">&#9998;</span>` : ''}
                   <p>${blog.content}</p>
                 </div>
               </div>

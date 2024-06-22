@@ -78,7 +78,10 @@ def login(request):
     user = authenticate(request, username=username, password=password)
     if user is not None:
         tokens = get_tokens_for_user(user)
-        return Response(tokens, status=status.HTTP_200_OK)
+        serializer = UserSerializer(user)
+        response = serializer.data
+        response.update(tokens)
+        return Response(response, status=status.HTTP_200_OK)
     else:
         return Response({'error': 'Invalid username/email or password'}, status=status.HTTP_400_BAD_REQUEST)
 
