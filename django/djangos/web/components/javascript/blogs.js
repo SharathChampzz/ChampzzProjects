@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
         blogList.innerHTML = "";
         data.reverse().forEach(blog => {
           blogList.innerHTML += `
-          <li class="list-group-item" data-id="${blog.id}">
+          <li class="list-group-item" data-id="${blog.id}" data-toggle="modal" data-target="#editBlogModal">
             <a href="#" class="blog-link" data-toggle="modal" data-target="#editBlogModal">${blog.title}</a>
             <p>${truncateContent(blog.content)}</p>
           </li>
@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       });
   }
+
 
   function getHeaders() {
     return {
@@ -94,11 +95,21 @@ document.addEventListener("DOMContentLoaded", function () {
       const listItem = e.target.closest("li.list-group-item");
       if (listItem) {
         editBlogId = listItem.getAttribute("data-id");
-        const title = listItem.querySelector(".blog-link").innerText;
-        const content = listItem.querySelector("p").innerText;
 
-        document.getElementById("editTitle").value = title;
-        document.getElementById("editContent").value = content;
+        // fetch blog details
+        fetch(`${blogBaseUrl}${editBlogId}`, {
+          method: "GET",
+          headers: getHeaders(),
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log("data in fetchBlog:", data)
+          document.getElementById("editTitle").value = data.title;
+          document.getElementById("editContent").value = data.content;
+        })
+        .catch(error => {
+          console.error("Error:", error);
+        });
         document.getElementById("deleteblog").hidden = false;
       }
     });
