@@ -9,7 +9,7 @@
 {% block style %}
 <style>
     .blog-list {
-        max-height: 80vh;
+        max-height: 70vh;
         overflow-y: auto;
         padding: 20px;
         border-radius: 8px;
@@ -60,6 +60,15 @@
             <!-- Blog items will go here -->
         </ul>
     </div>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination mt-2" id="pagination">
+          <!-- <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#">Next</a></li> -->
+        </ul>
+      </nav>
 </div>
 
 <!-- Main Container -->
@@ -96,7 +105,7 @@
             </div>
         </div>
     </div>
-</div>
+    </div>
 
 <!-- Set the req info for JS -->
 <div hidden id="blogs-blogs" data-url="{% url 'blogs-blogs' %}"></div>

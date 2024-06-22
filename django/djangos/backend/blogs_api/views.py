@@ -5,6 +5,8 @@ from rest_framework import status
 from .models import Blog
 from .serializers import BlogSerializer
 from backend.users_api.permissions import IsSuperUser
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 @api_view(['GET', 'POST'])
 # @permission_classes([IsSuperUser]) # relaxing this check for the bot to work
@@ -21,9 +23,32 @@ def blogs(request: Request) -> Response:
         - If POST request: the created blog or error message
     """
     if request.method == 'GET':
-        blogs = Blog.objects.all()
-        serializer = BlogSerializer(blogs, many=True)
-        return Response(serializer.data)
+        blogs = Blog.objects.all().order_by('-created_at')
+        page = request.GET.get('page', 1)
+        paginator = Paginator(blogs, 5)  # Show 10 blogs per page
+
+        try:
+            blogs_paginated = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            blogs_paginated = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            blogs_paginated = paginator.page(paginator.num_pages)
+
+        serializer = BlogSerializer(blogs_paginated, many=True)
+
+        response_data = {
+            'blogs': serializer.data,
+            'page': blogs_paginated.number,
+            'pages': paginator.num_pages,
+            'has_next': blogs_paginated.has_next(),
+            'has_previous': blogs_paginated.has_previous(),
+            'next_page_number': blogs_paginated.next_page_number() if blogs_paginated.has_next() else None,
+            'previous_page_number': blogs_paginated.previous_page_number() if blogs_paginated.has_previous() else None,
+        }
+
+        return Response(response_data)
     
     if request.method == 'POST':
         serializer = BlogSerializer(data=request.data)

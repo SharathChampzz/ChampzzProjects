@@ -17,9 +17,12 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("blogBaseUrl:", blogBaseUrl);
 
   function fetchBlogs() {
-    fetch(blogsUrl, {
+    const urlParams = new URLSearchParams(window.location.search);
+    const page = urlParams.get("page") || 1;
+
+    fetch(`${blogsUrl}?page=${page}`, {
       method: "GET",
-      headers: getHeaders(),
+      headers: getHeaders()
     })
       .then(response => {
         if (!response.ok) {
@@ -37,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(data => {
         const blogList = document.getElementById("blogList");
         blogList.innerHTML = "";
-        data.reverse().forEach(blog => {
+        data.blogs.reverse().forEach(blog => {
           // const isSuperUser = is_superuser | false; // Default to true if not specified
           // console.log('blog.image:', blog.image);
           console
@@ -54,6 +57,13 @@ document.addEventListener("DOMContentLoaded", function () {
             </li>
           `;
       });
+
+      // Add pagination links
+      const pagination = document.getElementById("pagination");
+      pagination.innerHTML = "";
+      for (let i = 1; i <= data.pages; i++) {
+        pagination.innerHTML += `<li class="page-item ${page === i ? "active" : ""}"><a class="page-link" href="/blogs?page=${i}" data-page="${i}">${i}</a></li>`;
+      }
       });
   }
   // <p>${truncateContent(blog.content)}</p>
