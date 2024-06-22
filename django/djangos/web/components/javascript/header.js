@@ -8,7 +8,7 @@ document.getElementById("logout").addEventListener("click", function (e) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      Authorization: localStorage.getItem("access_token")
+      // Authorization: localStorage.getItem("access_token")
     },
     body: JSON.stringify({ refresh: localStorage.getItem("refresh_token")}),
   })

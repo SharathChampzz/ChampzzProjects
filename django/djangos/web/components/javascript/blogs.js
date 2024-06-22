@@ -1,12 +1,8 @@
 console.log("Hello from external blogs_web/index.html");
 $(document).ready(function () {
   let editBlogId;
-  const blogsUrl = document
-    .getElementById("blogs-blogs")
-    .getAttribute("data-url");
-  const blogWithIdZero = document
-    .getElementById("blogs-blog")
-    .getAttribute("data-url");
+  const blogsUrl = document.getElementById("blogs-blogs").getAttribute("data-url");
+  const blogWithIdZero = document.getElementById("blogs-blog").getAttribute("data-url");
   console.log("blogsUrl:", blogsUrl);
   console.log("blogWithIdZero:", blogWithIdZero);
 
@@ -83,6 +79,7 @@ $(document).ready(function () {
   // Handle form submission for editing a blog
   $("#editBlogForm").on("submit", function (e) {
     e.preventDefault();
+    console.log("editBlogForm submitted")
     const title = $("#editTitle").val();
     const content = $("#editContent").val();
     var blogUrl = `${blogWithIdZero}`.slice(0, -1); // Remove the trailing '0' to get the base URL
@@ -102,4 +99,32 @@ $(document).ready(function () {
       },
     });
   });
+
+  // Handle blog deletion
+  $("#deleteblog").on("click", function (e) {
+    e.preventDefault();
+    console.log("Delete blog button clicked");
+    // Ask confirmation from user
+    if (!confirm("Are you sure you want to delete this blog?")) {
+      return;
+    }
+    var blogUrl = `${blogWithIdZero}`.slice(0, -1); // Remove the trailing '0' to get the base URL
+
+    $.ajax({
+      url: `${blogUrl}${editBlogId}`,
+      method: "DELETE",
+      contentType: "application/json",
+      headers: {
+        Authorization: localStorage.getItem("access_token"),
+        Accept: "application/json",
+      },
+      // data: JSON.stringify({ title: title, content: content }),
+      success: function () {
+        $("#editBlogModal").modal("hide");
+        fetchBlogs();
+      },
+    });
+  });
+
+
 });
