@@ -14,7 +14,7 @@ from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, Ou
 from rest_framework_simplejwt.exceptions import TokenError
 
 @api_view(['POST', 'GET'])
-@permission_classes([IsSuperUser])
+# @permission_classes([IsSuperUser]) # user registration should be open to everyone
 def users(request):
     if request.method == 'GET':
         users = User.objects.all()

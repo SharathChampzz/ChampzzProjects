@@ -9,6 +9,10 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
+  if (!is_superuser) {
+    document.getElementById("add-blog").hidden = true;
+  }
+
   console.log("blogsUrl:", blogsUrl);
   console.log("blogBaseUrl:", blogBaseUrl);
 
@@ -35,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
         blogList.innerHTML = "";
         data.reverse().forEach(blog => {
           // const isSuperUser = is_superuser | false; // Default to true if not specified
-          console.log('blog.image:', blog.image);
+          // console.log('blog.image:', blog.image);
           console
           blogList.innerHTML += `
             <li class="list-group-item" data-id="${blog.id}">
@@ -129,8 +133,8 @@ document.getElementById('blogList').addEventListener('click', function(event) {
           .then(response => response.json())
           .then(blog => {
               // Fill the form with the blog details
-              document.getElementById('editTitle').value = blog.title;
-              document.getElementById('editContent').value = blog.content;
+              document.getElementById('editTitle').value = blog.title ||'';
+              document.getElementById('editContent').value = blog.content || '';
               document.getElementById('imageFile').value = null; // Clear the old file input
               document.getElementById("deleteblog").hidden = false;
               // Handle the image separately if needed

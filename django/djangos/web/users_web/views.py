@@ -6,5 +6,5 @@ from django.shortcuts import render
 def login(request):
     return render(request, 'users_web/login.html')
 
-def logout(request):
-    return render(request, 'users_web/logout.html')
+def register(request):
+    return render(request, 'users_web/register.html')
