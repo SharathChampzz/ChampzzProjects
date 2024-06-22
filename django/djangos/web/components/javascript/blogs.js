@@ -129,6 +129,7 @@ document.getElementById('blogList').addEventListener('click', function(event) {
               document.getElementById('editTitle').value = blog.title;
               document.getElementById('editContent').value = blog.content;
               document.getElementById('imageFile').value = null; // Clear the old file input
+              document.getElementById("deleteblog").hidden = false;
               // Handle the image separately if needed
           })
           .catch(error => {
