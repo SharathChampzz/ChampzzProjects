@@ -33,12 +33,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const blogList = document.getElementById("blogList");
         blogList.innerHTML = "";
         data.reverse().forEach(blog => {
+          const isSuperUser = blog.superuser !== undefined ? blog.superuser : true; // Default to true if not specified
           blogList.innerHTML += `
-              <li class="list-group-item" data-id="${blog.id}" data-toggle="modal" data-target="#editBlogModal">
+              <li class="list-group-item" data-id="${blog.id}">
                   <div class="clearfix">
                       ${blog.image ? `<img src="${blog.image}" class="blog-image img-fluid" alt="${blog.title}">` : ''}
                       <div class="blog-content">
-                          <a href="#" class="blog-link" data-toggle="modal" data-target="#editBlogModal">${blog.title}</a>
+                          <a href="#" class="blog-link" target="_blank">${blog.title}</a>
+                          ${isSuperUser ? `<span class="edit-icon" data-toggle="modal" data-target="#editBlogModal" data-id="${blog.id}">&#9998;</span>` : ''}
                           <p>${blog.content}</p>
                       </div>
                   </div>
@@ -63,7 +65,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function handleSubmit(url, method, title, content) {
-    const formData = new FormData(document.getElementById("editBlogForm"));
+    const formData = new FormData();
+    title = document.getElementById("editTitle").value;
+    content = document.getElementById("editContent").value;
+    formData.append("title", title);
+    formData.append("content", content);
+    
+    const imageFile = document.getElementById("imageFile").files[0];
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
 
     fetch(url, {
       method: method,
@@ -73,6 +84,8 @@ document.addEventListener("DOMContentLoaded", function () {
       body: formData,
     })
       .then(() => {
+        // close bootstrap modal by id
+        document.getElementById("close-modal").click();
         fetchBlogs();
       });
   }
@@ -99,31 +112,30 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  const blogList = document.getElementById("blogList");
-  if (blogList) {
-    blogList.addEventListener("click", function (e) {
-      const listItem = e.target.closest("li.list-group-item");
-      if (listItem) {
-        editBlogId = listItem.getAttribute("data-id");
+// Event delegation for handling edit icon clicks
+document.getElementById('blogList').addEventListener('click', function(event) {
+  if (event.target.classList.contains('edit-icon')) {
+      editBlogId = event.target.getAttribute('data-id');
+      console.log('Edit icon clicked for blog ID:', editBlogId);
 
-        // fetch blog details
-        fetch(`${blogBaseUrl}${editBlogId}`, {
-          method: "GET",
+      // Make an API call to get the blog details
+      fetch(`${blogBaseUrl}${editBlogId}`, {
+          method: 'GET',
           headers: getHeaders(),
-        })
-        .then(response => response.json())
-        .then(data => {
-          console.log("data in fetchBlog:", data)
-          document.getElementById("editTitle").value = data.title;
-          document.getElementById("editContent").value = data.content;
-        })
-        .catch(error => {
-          console.error("Error:", error);
-        });
-        document.getElementById("deleteblog").hidden = false;
-      }
-    });
+      })
+          .then(response => response.json())
+          .then(blog => {
+              // Fill the form with the blog details
+              document.getElementById('editTitle').value = blog.title;
+              document.getElementById('editContent').value = blog.content;
+              document.getElementById('imageFile').value = null; // Clear the old file input
+              // Handle the image separately if needed
+          })
+          .catch(error => {
+              console.error('Error fetching blog details:', error);
+          });
   }
+});
 
   const editBlogForm = document.getElementById("editBlogForm");
   if (editBlogForm) {
@@ -131,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
       const title = document.getElementById("editTitle").value;
       const content = document.getElementById("editContent").value;
-      const method = editBlogId === undefined ? "POST" : "PUT";
+      const method = editBlogId === undefined ? "POST" : "PATCH";
       const url = editBlogId === undefined ? blogsUrl : `${blogBaseUrl}${editBlogId}`;
       handleSubmit(url, method, title, content);
     });

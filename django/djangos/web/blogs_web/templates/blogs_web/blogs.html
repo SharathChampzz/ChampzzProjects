@@ -30,6 +30,10 @@
             max-height: 150px;
             margin-left: 20px;
         }
+        .edit-icon {
+            cursor: pointer;
+            margin-left: 10px;
+        }
 </style>
 
 {% endblock %}
@@ -68,7 +72,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editBlogModalLabel">Edit Blog</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close-modal">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -86,7 +90,7 @@
                         <label for="imageFile">Image</label>
                         <input type="file" class="form-control" id="imageFile" name="image">
                     </div>
-                    <button type="submit" class="btn btn-secondary" data-toggle="modal" data-target="#editBlogModal">Save</button>
+                    <button type="submit" class="btn btn-secondary">Save</button>
                     <button class="btn btn-danger" id="deleteblog" data-toggle="modal" data-target="#editBlogModal">Delete</button>
                 </form>
             </div>
