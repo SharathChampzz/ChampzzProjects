@@ -1,155 +1,147 @@
-console.log("Hello from external blogs_web/index.html");
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
   let editBlogId;
-  const blogsUrl = document.getElementById("blogs-blogs").getAttribute("data-url");
-  const blogWithIdZero = document.getElementById("blogs-blog").getAttribute("data-url");
-  console.log("blogsUrl:", blogsUrl);
-  console.log("blogWithIdZero:", blogWithIdZero);
+  const blogsUrl = document.getElementById("blogs-blogs")?.getAttribute("data-url");
+  const blogBaseUrl = document.getElementById("blogs-blog")?.getAttribute("data-url")?.slice(0, -1);
 
-  // Function to fetch blogs
+  if (!blogsUrl || !blogBaseUrl) {
+    console.error("Required elements not found in the DOM.");
+    return;
+  }
+
+  console.log("blogsUrl:", blogsUrl);
+  console.log("blogBaseUrl:", blogBaseUrl);
+
   function fetchBlogs() {
-    $.ajax({
-      url: blogsUrl,
+    fetch(blogsUrl, {
       method: "GET",
-      headers: {
-        Authorization: localStorage.getItem("access_token"),
-        Accept: "application/json",
-      },
-      success: function (data) {
-        $("#blogList").empty();
-        data.forEach(function (blog) {
-          $("#blogList").append(`
-                                <li class="list-group-item" data-id="${
-                                  blog.id
-                                }">
-                                    <a href="#" class="blog-link">${
-                                      blog.title
-                                    }</a>
-                                    <p>${
-                                      blog.content.length > 200
-                                        ? blog.content.substring(0, 200) + "..."
-                                        : blog.content
-                                    }</p>
-                                </li>
-                            `);
+      headers: getHeaders(),
+    })
+      .then(response => response.json())
+      .then(data => {
+        const blogList = document.getElementById("blogList");
+        blogList.innerHTML = "";
+        data.forEach(blog => {
+          blogList.innerHTML += `
+          <li class="list-group-item" data-id="${blog.id}">
+            <a href="#" class="blog-link">${blog.title}</a>
+            <p>${truncateContent(blog.content)}</p>
+          </li>
+        `;
         });
-      },
+      });
+  }
+
+  function getHeaders() {
+    return {
+      Authorization: localStorage.getItem("access_token"),
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    };
+  }
+
+  function truncateContent(content) {
+    return content.length > 200 ? content.substring(0, 200) + "..." : content;
+  }
+
+  function handleSubmit(url, method, title, content) {
+    fetch(url, {
+      method: method,
+      headers: getHeaders(),
+      body: JSON.stringify({ title, content }),
+    })
+      .then(() => {
+        hideModal();
+        fetchBlogs();
+      });
+  }
+
+  function showModal() {
+    const modal = document.getElementById("editBlogModal");
+    modal.classList.add("show");
+    modal.classList.add("fade");
+    modal.style.display = "block";
+    modal.setAttribute("aria-hidden", "false");
+    modal.setAttribute("aria-modal", "true");
+    modal.removeAttribute("hidden");
+  }
+
+  function hideModal() {
+    const modal = document.getElementById("editBlogModal");
+    modal.classList.remove("show");
+    modal.classList.remove("fade");
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+    modal.removeAttribute("aria-modal");
+  }
+
+  const addBlogButton = document.getElementById("add-blog");
+  if (addBlogButton) {
+    addBlogButton.addEventListener("click", function () {
+      document.getElementById("editBlogModalLabel").innerText = "Add Blog";
+      document.getElementById("editTitle").value = "";
+      document.getElementById("editContent").value = "";
+      document.getElementById("deleteblog").hidden = true;
+      showModal();
+      editBlogId = undefined;
+    });
+  }
+
+  const blogForm = document.getElementById("blogForm");
+  if (blogForm) {
+    blogForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const title = document.getElementById("title").value;
+      const content = document.getElementById("content").value;
+      handleSubmit(blogsUrl, "POST", title, content);
+    });
+  }
+
+  const blogList = document.getElementById("blogList");
+  if (blogList) {
+    blogList.addEventListener("click", function (e) {
+      const listItem = e.target.closest("li.list-group-item");
+      if (listItem) {
+        editBlogId = listItem.getAttribute("data-id");
+        const title = listItem.querySelector(".blog-link").innerText;
+        const content = listItem.querySelector("p").innerText;
+
+        document.getElementById("editTitle").value = title;
+        document.getElementById("editContent").value = content;
+        document.getElementById("deleteblog").hidden = false;
+        showModal();
+      }
+    });
+  }
+
+  const editBlogForm = document.getElementById("editBlogForm");
+  if (editBlogForm) {
+    editBlogForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const title = document.getElementById("editTitle").value;
+      const content = document.getElementById("editContent").value;
+      const method = editBlogId === undefined ? "POST" : "PUT";
+      const url = editBlogId === undefined ? blogsUrl : `${blogBaseUrl}${editBlogId}`;
+      handleSubmit(url, method, title, content);
+    });
+  }
+
+  const deleteBlogButton = document.getElementById("deleteblog");
+  if (deleteBlogButton) {
+    deleteBlogButton.addEventListener("click", function (e) {
+      e.preventDefault();
+      if (confirm("Are you sure you want to delete this blog?")) {
+        fetch(`${blogBaseUrl}${editBlogId}`, {
+          method: "DELETE",
+          headers: getHeaders(),
+        })
+          .then(() => {
+            hideModal();
+            fetchBlogs();
+          });
+      }
     });
   }
 
   // Fetch blogs on page load
   fetchBlogs();
-
-   // Handle click on blog item for editing
-   $("#add-blog").on("click", function () {
-    $("#editBlogModalLabel").text('Add Blog');
-    $("#editTitle").val("");
-      $("#editContent").val("");
-    $("#deleteblog").hide();
-    $("#editBlogModal").modal("show");
-    editBlogId = undefined;
-  });
-
-  // Handle form submission for creating a blog
-  $("#blogForm").on("submit", function (e) {
-    e.preventDefault();
-    const title = $("#title").val();
-    const content = $("#content").val();
-
-    $.ajax({
-      url: blogsUrl,
-      method: "POST",
-      contentType: "application/json",
-      headers: {
-        Authorization: localStorage.getItem("access_token"),
-        Accept: "application/json",
-      },
-      data: JSON.stringify({ title: title, content: content }),
-      success: function () {
-        // Clear form
-        $("#title").val("");
-        $("#content").val("");
-        // Refresh blog list
-        fetchBlogs();
-      },
-    });
-  });
-
-  // Handle click on blog item for editing
-  $("#blogList").on("click", ".list-group-item", function () {
-    editBlogId = $(this).data("id");
-    const title = $(this).find(".blog-link").text();
-    const content = $(this).find("p").text();
-
-    $("#editTitle").val(title);
-    $("#editContent").val(content);
-    $("#deleteblog").show();
-    $("#editBlogModal").modal("show");
-  });
-
-  // Handle form submission for editing a blog
-  $("#editBlogForm").on("submit", function (e) {
-    e.preventDefault();
-    console.log("editBlogForm submitted")
-    const title = $("#editTitle").val();
-    const content = $("#editContent").val();
-    var blogUrl = `${blogWithIdZero}`.slice(0, -1); // Remove the trailing '0' to get the base URL
-
-    console.log("editBlogId:", editBlogId);
-    let method, url;
-    if (editBlogId == undefined) {
-      method = "POST";
-      url = blogsUrl;
-    }
-    else{
-      method = "PUT";
-      url = `${blogUrl}${editBlogId}`
-    }
-    console.log("method:", method);
-    console.log("url:", url);
-
-
-    $.ajax({
-      url: url,
-      method: method ,
-      contentType: "application/json",
-      headers: {
-        Authorization: localStorage.getItem("access_token"),
-        Accept: "application/json",
-      },
-      data: JSON.stringify({ title: title, content: content }),
-      success: function () {
-        $("#editBlogModal").modal("hide");
-        fetchBlogs();
-      },
-    });
-  });
-
-  // Handle blog deletion
-  $("#deleteblog").on("click", function (e) {
-    e.preventDefault();
-    console.log("Delete blog button clicked");
-    // Ask confirmation from user
-    if (!confirm("Are you sure you want to delete this blog?")) {
-      return;
-    }
-    var blogUrl = `${blogWithIdZero}`.slice(0, -1); // Remove the trailing '0' to get the base URL
-
-    $.ajax({
-      url: `${blogUrl}${editBlogId}`,
-      method: "DELETE",
-      contentType: "application/json",
-      headers: {
-        Authorization: localStorage.getItem("access_token"),
-        Accept: "application/json",
-      },
-      // data: JSON.stringify({ title: title, content: content }),
-      success: function () {
-        $("#editBlogModal").modal("hide");
-        fetchBlogs();
-      },
-    });
-  });
-
-
 });
