@@ -1,11 +1,13 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
 from .models import Blog
 from .serializers import BlogSerializer
+from backend.users_api.permissions import IsSuperUser
 
 @api_view(['GET', 'POST'])
+# @permission_classes([IsSuperUser]) # relaxing this check for the bot to work
 def blogs(request: Request) -> Response:
     """
     Get all blogs or create a new blog.
@@ -31,6 +33,7 @@ def blogs(request: Request) -> Response:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+@permission_classes([IsSuperUser])
 def blog(request: Request, id: int) -> Response:
     """
     Get, update, partially update, or delete a blog by id.

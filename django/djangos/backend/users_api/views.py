@@ -14,6 +14,7 @@ from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, Ou
 from rest_framework_simplejwt.exceptions import TokenError
 
 @api_view(['POST', 'GET'])
+@permission_classes([IsSuperUser])
 def users(request):
     if request.method == 'GET':
         users = User.objects.all()
@@ -30,7 +31,7 @@ def users(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
-@permission_classes([IsAuthenticated, IsSuperUser])
+@permission_classes([IsSuperUser])
 def user_detail(request, pk):
     try:
         user = User.objects.get(pk=pk)
