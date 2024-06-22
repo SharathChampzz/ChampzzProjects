@@ -34,12 +34,17 @@ document.addEventListener("DOMContentLoaded", function () {
         blogList.innerHTML = "";
         data.reverse().forEach(blog => {
           blogList.innerHTML += `
-          <li class="list-group-item" data-id="${blog.id}" data-toggle="modal" data-target="#editBlogModal">
-            <a href="#" class="blog-link" data-toggle="modal" data-target="#editBlogModal">${blog.title}</a>
-            <p>${blog.content}</p>
-          </li>
-        `;
-        });
+              <li class="list-group-item" data-id="${blog.id}" data-toggle="modal" data-target="#editBlogModal">
+                  <div class="clearfix">
+                      ${blog.image ? `<img src="${blog.image}" class="blog-image img-fluid" alt="${blog.title}">` : ''}
+                      <div class="blog-content">
+                          <a href="#" class="blog-link" data-toggle="modal" data-target="#editBlogModal">${blog.title}</a>
+                          <p>${blog.content}</p>
+                      </div>
+                  </div>
+              </li>
+          `;
+      });
       });
   }
   // <p>${truncateContent(blog.content)}</p>
