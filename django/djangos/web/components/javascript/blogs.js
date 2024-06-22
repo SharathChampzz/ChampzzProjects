@@ -40,6 +40,16 @@ $(document).ready(function () {
   // Fetch blogs on page load
   fetchBlogs();
 
+   // Handle click on blog item for editing
+   $("#add-blog").on("click", function () {
+    $("#editBlogModalLabel").text('Add Blog');
+    $("#editTitle").val("");
+      $("#editContent").val("");
+    $("#deleteblog").hide();
+    $("#editBlogModal").modal("show");
+    editBlogId = undefined;
+  });
+
   // Handle form submission for creating a blog
   $("#blogForm").on("submit", function (e) {
     e.preventDefault();
@@ -73,6 +83,7 @@ $(document).ready(function () {
 
     $("#editTitle").val(title);
     $("#editContent").val(content);
+    $("#deleteblog").show();
     $("#editBlogModal").modal("show");
   });
 
@@ -84,9 +95,23 @@ $(document).ready(function () {
     const content = $("#editContent").val();
     var blogUrl = `${blogWithIdZero}`.slice(0, -1); // Remove the trailing '0' to get the base URL
 
+    console.log("editBlogId:", editBlogId);
+    let method, url;
+    if (editBlogId == undefined) {
+      method = "POST";
+      url = blogsUrl;
+    }
+    else{
+      method = "PUT";
+      url = `${blogUrl}${editBlogId}`
+    }
+    console.log("method:", method);
+    console.log("url:", url);
+
+
     $.ajax({
-      url: `${blogUrl}${editBlogId}`,
-      method: "PUT",
+      url: url,
+      method: method ,
       contentType: "application/json",
       headers: {
         Authorization: localStorage.getItem("access_token"),
