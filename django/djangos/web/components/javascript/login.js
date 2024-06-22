@@ -1,38 +1,36 @@
-document.getElementById('login-form').addEventListener('submit', function (e) {
-    const usersLoginEndpoint = document.getElementById('users-login').getAttribute('data-url');
-    const blogsPage = document.getElementById('web-blogs').getAttribute('data-url');
-    console.log(`Sending request to ${this.action}`)
+document.getElementById("login-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const usersLoginEndpoint = document.getElementById("users-login").getAttribute("data-url");
+    const blogsPage = document.getElementById("web-blogs").getAttribute("data-url");
+    console.log(`Sending request to ${this.action}`);
 
-    e.preventDefault()
-    const formData = new FormData(e.target)
-    const data = {}
+    const formData = new FormData(e.target);
+    const data = {};
     formData.forEach((value, key) => {
-        data[key] = value
-    })
+        data[key] = value;
+    });
     fetch(usersLoginEndpoint, {
-        method: 'POST',
+        method: "POST",
         headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
+            Accept: "application/json",
+            "Content-Type": "application/json",
             // 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
     })
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
             if (data.error) {
-                alert(data.error)
+                alert(data.error);
+            } else {
+                console.log(data);
+                access_token = data.access;
+                refresh_token = data.refresh;
+                localStorage.setItem("access_token", `Bearer  ${access_token}`);
+                localStorage.setItem("refresh_token", refresh_token);
+                console.log(access_token);
+                console.log(refresh_token);
+                window.location.href = blogsPage;
             }
-            else {
-                console.log(data)
-                access_token = data.access
-                refresh_token = data.refresh
-                localStorage.setItem('access_token', `Bearer  ${access_token}`);
-                localStorage.setItem('refresh_token', refresh_token);
-                console.log(access_token)
-                console.log(refresh_token)
-                window.location.href = blogsPage
-            }
-        })
-}
-)
+        });
+});
