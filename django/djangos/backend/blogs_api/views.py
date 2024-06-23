@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 @api_view(['GET', 'POST'])
-# @permission_classes([IsSuperUser]) # relaxing this check for the bot to work
+@permission_classes([IsSuperUser])
 def blogs(request: Request) -> Response:
     """
     Get all blogs or create a new blog.
