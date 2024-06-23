@@ -1,3 +1,4 @@
+*.log
 *.mp4
 *.mp3
 *.jpg
@@ -8,3 +9,12 @@
 .env
 *.pyc
 TestingPhase
+autocenter
+django_projects
+lesson1
+ai_news_reader
+connect_to_discord
+copy_folder_to_remote
+*.bak
+*.dat
+*.dir
