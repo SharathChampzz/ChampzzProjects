@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-GEN_AI_API_KEY = os.getenv("GEN_AI_API_KEY")
+GEN_AI_API_KEY = os.getenv("GEN_AI_API_KEY") # https://aistudio.google.com/app/apikey
 
 class Summarizer:
     def __init__(self, model_name):
