@@ -1,7 +1,10 @@
 from transformers import pipeline
 import google.generativeai as genai
+import os
+from dotenv import load_dotenv
 
-GEN_AI_API_KEY = "AIzaSyCjo38aDuABdKox7FdVUM85sLY05bibxmg"
+load_dotenv()
+GEN_AI_API_KEY = os.getenv("GEN_AI_API_KEY")
 
 class Summarizer:
     def __init__(self, model_name):
