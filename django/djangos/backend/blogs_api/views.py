@@ -7,6 +7,8 @@ from .serializers import BlogSerializer
 from backend.users_api.permissions import IsSuperUser
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+import logging
+logger = logging.getLogger('webserver')
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsSuperUser])
@@ -22,6 +24,7 @@ def blogs(request: Request) -> Response:
         - If GET request: a list of all blogs
         - If POST request: the created blog or error message
     """
+    logger.debug('Blogs requested')
     if request.method == 'GET':
         blogs = Blog.objects.all().order_by('-created_at')
         page = request.GET.get('page', 1) # get the page number from the query params

@@ -73,61 +73,12 @@ SIMPLE_JWT = {
 }
 
 
-# Define the log level
+# logger settings
+from djangos.logger_settings import log_level, log_files_directory, logging_settings
 
-"""
-DEBUG: Detailed information, typically of interest only when diagnosing problems.
-INFO: Confirmation that things are working as expected.
-WARNING: An indication that something unexpected happened or indicative of some problem in the near future (e.g., ‘disk space low’). The software is still working as expected.
-ERROR: Due to a more serious problem, the software has not been able to perform some function.
-CRITICAL: A very serious error, indicating that the program itself may be unable to continue running.
-"""
-
-LOG_LEVEL = os.getenv('DJANGO_LOG_LEVEL', 'DEBUG')
-LOG_FILES_DIR = os.path.join(BASE_DIR, 'Log Files')
-
-# Create the "Log Files" directory if it doesn't exist
-if not os.path.exists(LOG_FILES_DIR):
-    os.makedirs(LOG_FILES_DIR)
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'file': {
-            'level': LOG_LEVEL,
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_FILES_DIR, 'WebServer.log'),  # Ensure BASE_DIR is defined
-            'formatter': 'verbose',
-        },
-    },
-    'root': {
-        'handlers': ['file'],
-        'level': 'WARNING',
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'WebServer': {
-            'handlers': ['file'],
-            'level': LOG_LEVEL,
-            'propagate': True,
-        },
-    },
-}
+LOG_LEVEL = log_level
+LOG_FILES_DIR = log_files_directory
+LOGGING = logging_settings
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

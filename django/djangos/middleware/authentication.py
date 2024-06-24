@@ -3,7 +3,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.http import JsonResponse
 
 import logging
-logger = logging.getLogger('AuthenticationMiddleware')
+logger = logging.getLogger('webserver')
 
 class AuthenticationMiddleware(MiddlewareMixin):
     def process_request(self, request):

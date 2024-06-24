@@ -9,7 +9,7 @@ from lxml import html
 from .text_summarizer import Summarizer
 
 import logging
-logger = logging.getLogger('django')
+logger = logging.getLogger('scheduler')
 
 class News:
     def __init__(self, num_news: int = 5):
@@ -40,7 +40,7 @@ class News:
     def save_news(self, title: str, status: bool):
         """Save news titles with their status to the SQLite database."""
         try:
-            print(f'Saving news to local database: {title}, status={status}')
+            logger.info(f'Saving news to local database: {title}, status={status}')
             self.cursor.execute('INSERT INTO news (title, status) VALUES (?, ?)', (title, status))
             self.conn.commit()
         except sqlite3.IntegrityError:
@@ -48,7 +48,7 @@ class News:
 
     def fetch_india_today_news(self) -> List[Dict[str, str]]:
         base_url = self.india_today_base_url
-        print(f'fetch_india_today_news: Fetching all news from {base_url}...')
+        logger.info(f'fetch_india_today_news: Fetching all news from {base_url}...')
         response = requests.get(base_url)
         response.raise_for_status()
 
@@ -68,7 +68,7 @@ class News:
 
             try:
                 child_image_src = post.find('img').get('src')
-                print(f'fetch_india_today_news: Fetching news details from {post_url}...')
+                logger.info(f'fetch_india_today_news: Fetching news details from {post_url}...')
                 news_details = requests.get(post_url)
                 news_details.raise_for_status()
                 news_soup = BeautifulSoup(news_details.text, 'html.parser')
@@ -85,11 +85,11 @@ class News:
                 self.seen_news.add(title)
                 self.save_news(title, True)
                 count += 1
-                print(f'fetch_india_today_news: To avoid bot detection, sleeping for 60 seconds...')
+                logger.info(f'fetch_india_today_news: To avoid bot detection, sleeping for 60 seconds...')
                 time.sleep(60)
 
             except Exception as e:
-                print(f"Error processing news: {title}. Error: {e}")
+                logger.info(f"Error processing news: {title}. Error: {e}")
                 self.save_news(title, False)
                 continue
 
@@ -134,10 +134,10 @@ class News:
                     self.seen_news.add(title)
                     self.save_news(title, True)
                     count += 1
-                    print(f'fetch_india_express_news: To avoid bot detection, sleeping for 60 seconds...')
+                    logger.info(f'fetch_india_express_news: To avoid bot detection, sleeping for 60 seconds...')
                     time.sleep(60)
             except Exception as e:
-                print(f"Error processing news: {link}. Error: {e}")
+                logger.info(f"Error processing news: {link}. Error: {e}")
                 self.save_news(title, False)
                 continue
             
@@ -188,10 +188,10 @@ def save_news_to_db():
         try:
             if len(news_item['highlights']) > 500:
                 news_item['highlights'] = summariser.summarize(news_item['highlights'])
-                print(f"Summarized news: {news_item['highlights']}")
-                print(f'To avoid bot detection, sleeping for 60 seconds...')
+                logger.info(f"Summarized news: {news_item['highlights']}")
+                logger.info(f'To avoid bot detection, sleeping for 60 seconds...')
                 time.sleep(60)
-            print(f"Saving news to database: {news_item}")
+            logger.info(f"Saving news to database: {news_item}")
             blog = Blog(title=news_item['title'], content=news_item['highlights'], image_url=news_item['image'], news_source=news_item['posturl'])
             blog.save()
         except Exception as e:

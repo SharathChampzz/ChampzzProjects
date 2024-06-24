@@ -3,7 +3,7 @@ import logging
 from celery import shared_task
 from web.blogs_web.utils import save_news_to_db
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('scheduler')
 
 @shared_task
 def scrape_and_save():

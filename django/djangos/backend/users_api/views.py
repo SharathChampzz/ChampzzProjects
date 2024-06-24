@@ -13,9 +13,13 @@ from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 from rest_framework_simplejwt.exceptions import TokenError
 
+import logging
+logger = logging.getLogger('webserver')
+
 @api_view(['POST', 'GET'])
 # @permission_classes([IsSuperUser]) # user registration should be open to everyone
 def users(request):
+    logging.debug('Users requested')
     if request.method == 'GET':
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
@@ -63,6 +67,7 @@ def get_tokens_for_user(user):
     
 @api_view(['POST'])
 def login(request):
+    logging.debug('Login requested')
     username = request.data.get('username')
     email = request.data.get('email')
     password = request.data.get('password')

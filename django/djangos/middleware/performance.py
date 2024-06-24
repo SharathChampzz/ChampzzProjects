@@ -2,7 +2,7 @@ import time
 import logging
 from django.utils.deprecation import MiddlewareMixin
 
-logger = logging.getLogger('performance')
+logger = logging.getLogger('webserver')
 
 class PerformanceMonitoringMiddleware(MiddlewareMixin):
     def process_request(self, request):
